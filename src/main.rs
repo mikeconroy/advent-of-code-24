@@ -1,17 +1,41 @@
 mod day1;
 mod day2;
+mod day3;
+mod traits;
 mod utils;
 
+use crate::day1::DayOne;
+use crate::day2::DayTwo;
+use crate::day3::DayThree;
+use crate::traits::Day;
+use std::env;
+
 fn main() {
-    let input = utils::read_file("data/day1");
-    println!(
-        "Day 1\n\tPart 1: {}\n\tPart 2: {}",
-        day1::part1(&input),
-        day1::part2(&input)
-    );
-    println!(
-        "Day 2\n\tPart 1: {}\n\tPart 2: {}",
-        day2::part1(),
-        day2::part2()
-    );
+    let args: Vec<String> = env::args().collect();
+    let days: Vec<Box<dyn Day>> = vec![Box::new(DayOne), Box::new(DayTwo), Box::new(DayThree)];
+
+    if args.len() > 1 {
+        let day = &args[1];
+        let day_index = day.parse::<usize>().unwrap_or(1) - 1;
+        if day_index < days.len() {
+            let day_instance = &days[day_index];
+            let input = utils::read_file(format!("data/day{}", day).as_str());
+            print_day(day, day_instance.part1(&input), day_instance.part2(&input));
+        } else {
+            println!("Day {} Not Found", day);
+        }
+    } else {
+        for (day, day_instance) in days.iter().enumerate() {
+            let input = utils::read_file(format!("data/day{}", day + 1).as_str());
+            print_day(
+                (day + 1).to_string().as_str(),
+                day_instance.part1(&input),
+                day_instance.part2(&input),
+            );
+        }
+    }
+}
+
+fn print_day(day: &str, p1: String, p2: String) {
+    println!("Day {}\n\tPart 1: {}\n\tPart 2: {}", day, p1, p2);
 }
