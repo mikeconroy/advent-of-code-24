@@ -1,18 +1,25 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 mod traits;
 mod utils;
 
 use crate::day1::DayOne;
 use crate::day2::DayTwo;
 use crate::day3::DayThree;
+use crate::day4::DayFour;
 use crate::traits::Day;
 use std::env;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let days: Vec<Box<dyn Day>> = vec![Box::new(DayOne), Box::new(DayTwo), Box::new(DayThree)];
+    let days: Vec<Box<dyn Day>> = vec![
+        Box::new(DayOne),
+        Box::new(DayTwo),
+        Box::new(DayThree),
+        Box::new(DayFour),
+    ];
 
     if args.len() > 1 {
         let day = &args[1];
