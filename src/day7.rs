@@ -44,6 +44,9 @@ fn can_be_solved(eq: &Equation, enable_concatanation: bool) -> bool {
             return false;
         }
     }
+    if eq.vals[0] > eq.ans {
+        return false;
+    }
 
     let mut add_vals: Vec<i64> = eq.vals.clone();
     let new_val = add_vals[0] + add_vals[1];
@@ -92,19 +95,19 @@ struct Equation {
     vals: Vec<i64>,
 }
 
-enum Ops {
-    ADD,
-    MUL,
-}
+// enum Ops {
+// ADD,
+// MUL,
+// }
 
-impl Ops {
-    fn exec(&self, a: i64, b: i64) -> i64 {
-        match &self {
-            Ops::ADD => a + b,
-            Ops::MUL => a * b,
-        }
-    }
-}
+// impl Ops {
+// fn exec(&self, a: i64, b: i64) -> i64 {
+// match &self {
+// Ops::ADD => a + b,
+// Ops::MUL => a * b,
+// }
+// }
+// }
 
 fn parse_input(input: &str) -> Vec<Equation> {
     let mut eqs: Vec<Equation> = Vec::new();

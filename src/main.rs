@@ -5,6 +5,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 mod traits;
 mod utils;
 
@@ -15,7 +16,9 @@ use crate::day4::DayFour;
 use crate::day5::DayFive;
 use crate::day6::DaySix;
 use crate::day7::DaySeven;
+use crate::day8::DayEight;
 use crate::traits::Day;
+use crate::utils::file::read_file;
 use std::env;
 
 fn main() {
@@ -28,6 +31,7 @@ fn main() {
         Box::new(DayFive),
         Box::new(DaySix),
         Box::new(DaySeven),
+        Box::new(DayEight),
     ];
 
     if args.len() > 1 {
@@ -35,14 +39,14 @@ fn main() {
         let day_index = day.parse::<usize>().unwrap_or(1) - 1;
         if day_index < days.len() {
             let day_instance = &days[day_index];
-            let input = utils::read_file(format!("data/day{}", day).as_str());
+            let input = read_file(format!("data/day{}", day).as_str());
             print_day(day, day_instance.part1(&input), day_instance.part2(&input));
         } else {
             println!("Day {} Not Found", day);
         }
     } else {
         for (day, day_instance) in days.iter().enumerate() {
-            let input = utils::read_file(format!("data/day{}", day + 1).as_str());
+            let input = read_file(format!("data/day{}", day + 1).as_str());
             print_day(
                 (day + 1).to_string().as_str(),
                 day_instance.part1(&input),
