@@ -1,14 +1,14 @@
 use std::collections::HashMap;
-#[derive(Hash, Eq, PartialEq, Debug)]
-struct Point {
-    x: i64,
-    y: i64,
+#[derive(Hash, Eq, PartialEq, Debug, Clone)]
+pub struct Point {
+    pub x: i64,
+    pub y: i64,
 }
 
 pub struct Grid {
-    cells: HashMap<Point, char>,
-    row_count: i64,
-    col_count: i64,
+    pub cells: HashMap<Point, char>,
+    pub row_count: i64,
+    pub col_count: i64,
 }
 impl Grid {
     pub fn new() -> Self {
@@ -23,23 +23,23 @@ impl Grid {
         self.cells.len().to_string()
     }
 
-    fn insert(&mut self, point: Point, value: char) {
+    pub fn insert(&mut self, point: Point, value: char) {
         self.cells.insert(point, value);
     }
 
-    fn get_char(&self, point: &Point) -> &char {
-        return self.cells.get(point).unwrap();
+    pub fn get_char(&self, point: &Point) -> &char {
+        return self.cells.get(point).unwrap_or(&' ');
     }
 
     pub fn load(&mut self, input: &str) {
         let mut x = 0;
         let mut y = 0;
         for line in input.lines() {
+            x = 0;
             for val in line.chars() {
                 self.insert(Point { x, y }, val);
                 x += 1;
             }
-            x = 0;
             y += 1;
         }
         self.col_count = x;

@@ -73,12 +73,12 @@ fn get_mul(mul_str: &str) -> i32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils;
+    use crate::utils::file::read_file;
 
     #[test]
     fn test_part1() {
         let day = DayThree {};
-        let input = utils::read_file("data/day3_test");
+        let input = read_file("data/day3_test");
         let result = day.part1(&input);
         assert_eq!(result, "161");
     }

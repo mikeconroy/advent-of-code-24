@@ -130,12 +130,12 @@ fn str_to_grid(input: &str) -> (HashMap<(i32, i32), char>, i32, i32) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils;
+    use crate::utils::file::read_file;
 
     #[test]
     fn test_part1() {
         let day = DayFour {};
-        let input = utils::read_file("data/day4_test");
+        let input = read_file("data/day4_test");
         let result = day.part1(&input);
         assert_eq!(result, "18");
     }
@@ -143,7 +143,7 @@ mod tests {
     #[test]
     fn test_part2() {
         let day = DayFour {};
-        let input = utils::read_file("data/day4_test");
+        let input = read_file("data/day4_test");
         let result = day.part2(&input);
         assert_eq!(result, "9");
     }

@@ -133,11 +133,11 @@ fn parse_input(input: &str) -> Vec<Equation> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils;
+    use crate::utils::file::read_file;
 
     #[test]
     fn test_part1() {
-        let test_input = utils::read_file("data/day7_test");
+        let test_input = read_file("data/day7_test");
         let day = DaySeven {};
         let result = day.part1(&test_input);
         assert_eq!(result, "3749");
@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        let test_input = utils::read_file("data/day7_test");
+        let test_input = read_file("data/day7_test");
         let day = DaySeven {};
         let result = day.part2(&test_input);
         assert_eq!(result, "11387");

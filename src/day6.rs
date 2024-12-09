@@ -140,12 +140,12 @@ fn parse_input(input: &str) -> (Grid, (i32, i32)) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils;
+    use crate::utils::file::read_file;
 
     #[test]
     fn test_part1() {
         let day = DaySix {};
-        let input = utils::read_file("data/day6_test");
+        let input = read_file("data/day6_test");
         let result = day.part1(&input);
         assert_eq!(result, "41");
     }
@@ -153,7 +153,7 @@ mod tests {
     #[test]
     fn test_part2() {
         let day = DaySix {};
-        let input = utils::read_file("data/day6_test");
+        let input = read_file("data/day6_test");
         let result = day.part2(&input);
         assert_eq!(result, "6");
     }

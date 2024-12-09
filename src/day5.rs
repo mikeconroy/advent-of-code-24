@@ -132,12 +132,12 @@ fn parse_input(input: &str) -> (Pages, Vec<Vec<i32>>) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils;
+    use crate::utils::file::read_file;
 
     #[test]
     fn test_part1() {
         let day = DayFive {};
-        let input = utils::read_file("data/day5_test");
+        let input = read_file("data/day5_test");
         let result = day.part1(&input);
         assert_eq!(result, "143");
     }
@@ -145,7 +145,7 @@ mod tests {
     #[test]
     fn test_part2() {
         let day = DayFive {};
-        let input = utils::read_file("data/day5_test");
+        let input = read_file("data/day5_test");
         let result = day.part2(&input);
         assert_eq!(result, "123");
     }
