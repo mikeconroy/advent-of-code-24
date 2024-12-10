@@ -19,10 +19,6 @@ impl Grid {
         }
     }
 
-    pub fn len_to_string(&self) -> String {
-        self.cells.len().to_string()
-    }
-
     pub fn insert(&mut self, point: Point, value: char) {
         self.cells.insert(point, value);
     }

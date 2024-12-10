@@ -3,8 +3,6 @@ use crate::utils::grid::Point;
 use crate::Day;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::io;
-use std::io::Write;
 
 pub struct DayEight;
 impl Day for DayEight {

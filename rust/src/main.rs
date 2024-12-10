@@ -6,6 +6,7 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
+// mod day9;
 mod traits;
 mod utils;
 
@@ -17,6 +18,7 @@ use crate::day5::DayFive;
 use crate::day6::DaySix;
 use crate::day7::DaySeven;
 use crate::day8::DayEight;
+// use crate::day9::DayNine;
 use crate::traits::Day;
 use crate::utils::file::read_file;
 use std::env;
@@ -32,6 +34,7 @@ fn main() {
         Box::new(DaySix),
         Box::new(DaySeven),
         Box::new(DayEight),
+        // Box::new(DayNine),
     ];
 
     if args.len() > 1 {
