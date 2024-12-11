@@ -32,22 +32,18 @@ func loadGrid(input []string) Grid {
 	return grid
 }
 
-func getTrailheads(point Point, currVal int, grid Grid, endPoints map[Point]bool) map[Point]bool {
+func getTrailheads(point Point, currVal int, grid Grid, endPoints map[Point]int) map[Point]int {
 	val, ok := grid[point]
 	if !ok {
-		fmt.Println("Point doesn't exist:", point, currVal)
 		return endPoints
 	}
 	if val != currVal+1 {
-		fmt.Println("Point not 1 step higher:", point, currVal)
 		return endPoints
 	}
 	if val == 9 {
-		fmt.Println("ENDPOINT FOUND", point)
-		endPoints[point] = true
+		endPoints[point] += 1
 		return endPoints
 	}
-	fmt.Println("Searching", point, currVal)
 
 	//Up
 	endPoints = getTrailheads(Point{point.x, point.y - 1}, val, grid, endPoints)
@@ -66,7 +62,7 @@ func part1(input []string) string {
 	totalScore := 0
 	for point, height := range grid {
 		if height == 0 {
-			endPoints := make(map[Point]bool)
+			endPoints := make(map[Point]int)
 			endPoints = getTrailheads(point, -1, grid, endPoints)
 			totalScore += len(endPoints)
 		}
@@ -75,5 +71,16 @@ func part1(input []string) string {
 }
 
 func part2(input []string) string {
-	return fmt.Sprint(0)
+	grid := loadGrid(input)
+	totalScore := 0
+	for point, height := range grid {
+		if height == 0 {
+			endPoints := make(map[Point]int)
+			endPoints = getTrailheads(point, -1, grid, endPoints)
+			for _, val := range endPoints {
+				totalScore += val
+			}
+		}
+	}
+	return fmt.Sprint(totalScore)
 }
