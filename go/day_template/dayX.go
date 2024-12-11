@@ -12,9 +12,9 @@ func Run() (string, string) {
 }
 
 func part1(input []string) string {
-	return fmt.Sprint(0)
+	return fmt.Sprint(1)
 }
 
 func part2(input []string) string {
-	return fmt.Sprint(0)
+	return fmt.Sprint(2)
 }
