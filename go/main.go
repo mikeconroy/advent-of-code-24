@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/mikeconroy/advent-of-code-24/day9"
 	"github.com/mikeconroy/advent-of-code-24/day10"
+	"github.com/mikeconroy/advent-of-code-24/day11"
 )
 
 func main() {
@@ -14,6 +15,7 @@ func main() {
 	days := []func() (string, string){
 		day9.Run,
 		day10.Run,
+		day11.Run,
 	}
 
 	if *dayToRun == 0 {
