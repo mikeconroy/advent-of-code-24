@@ -39,6 +39,39 @@ func parseInput(input string) []int {
 	return result
 }
 
+type Key struct {
+	stone, movesLeft int
+}
+
+var cache = make(map[Key]int)
+
+func blinkXTimes(stone int, x int) int {
+	if x == 0 {
+		return 1
+	}
+	key := Key{stone, x}
+	result, ok := cache[key]
+	if ok {
+		return result
+	}
+
+	result = 0
+	if stone == 0 {
+		result = blinkXTimes(1, x-1)
+	} else if stoneStr := strconv.Itoa(stone); len(stoneStr)%2 == 0 {
+		half := len(stoneStr) / 2
+		lhs, _ := strconv.Atoi(stoneStr[0:half])
+		rhs, _ := strconv.Atoi(stoneStr[half:])
+		result = blinkXTimes(lhs, x-1)
+		result += blinkXTimes(rhs, x-1)
+	} else {
+		result = blinkXTimes(stone*2024, x-1)
+	}
+	cache[key] = result
+
+	return result
+}
+
 func part1(input []string) string {
 	stones := parseInput(input[0])
 	for i := 0; i < 25; i++ {
@@ -46,12 +79,12 @@ func part1(input []string) string {
 	}
 	return fmt.Sprint(len(stones))
 }
-
 func part2(input []string) string {
 	stones := parseInput(input[0])
-	for i := 0; i < 75; i++ {
-		fmt.Println(i)
-		stones = Blink(stones)
+	result := 0
+	for _, stone := range stones {
+		ans := blinkXTimes(stone, 75)
+		result += ans
 	}
-	return fmt.Sprint(len(stones))
+	return fmt.Sprint(result)
 }

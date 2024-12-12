@@ -17,7 +17,7 @@ func TestDay11Part1(t *testing.T) {
 
 func TestDay11Part2(t *testing.T) {
 	input := utils.ReadFileIntoSlice("input_test")
-	expect := "55312"
+	expect := "65601038650482"
 	result := part2(input)
 	if result != expect {
 		t.Fatal("Day 11 - Part 2 output should be", expect, "but got", result)
