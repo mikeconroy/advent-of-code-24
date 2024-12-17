@@ -13,7 +13,7 @@ func Run() (string, string) {
 
 type Grid = [][]rune
 
-func parseInput(input []string) (Grid, []rune) {
+func parseInput(input []string, expanded bool) (Grid, []rune) {
 	isInstructions := false
 	grid := Grid{}
 	instructions := []rune{}
@@ -31,7 +31,21 @@ func parseInput(input []string) (Grid, []rune) {
 
 		row := []rune{}
 		for _, char := range line {
-			row = append(row, char)
+			if expanded {
+				switch char {
+				case '#':
+					row = append(row, []rune{'#', '#'}...)
+				case '.':
+					row = append(row, []rune{'.', '.'}...)
+				case '@':
+					row = append(row, []rune{'@', '.'}...)
+				case 'O':
+					row = append(row, []rune{'[', ']'}...)
+
+				}
+			} else {
+				row = append(row, char)
+			}
 		}
 		grid = append(grid, row)
 
@@ -63,18 +77,22 @@ func getStartPoint(grid Grid) Point {
 	return Point{}
 }
 
-func moveRobot(pos Point, grid Grid, instruction rune) Point {
-	var direction Point
+func getDirection(instruction rune) (direction Point) {
 	switch instruction {
 	case '<':
-		direction = Point{-1, 0}
+		direction = left
 	case '^':
-		direction = Point{0, -1}
+		direction = up
 	case '>':
-		direction = Point{1, 0}
+		direction = right
 	case 'v':
-		direction = Point{0, 1}
+		direction = down
 	}
+	return
+}
+
+func moveRobot(pos Point, grid Grid, instruction rune) Point {
+	direction := getDirection(instruction)
 
 	newPoint := Point{pos.x + direction.x, pos.y + direction.y}
 	if grid[newPoint.y][newPoint.x] == '.' {
@@ -105,7 +123,7 @@ func calculateGps(grid Grid) int {
 	gps := 0
 	for y, row := range grid {
 		for x, val := range row {
-			if val == 'O' {
+			if val == 'O' || val == '[' {
 				gps += (100 * y) + x
 			}
 		}
@@ -114,7 +132,7 @@ func calculateGps(grid Grid) int {
 }
 
 func part1(input []string) string {
-	grid, instructions := parseInput(input)
+	grid, instructions := parseInput(input, false)
 	robotPos := getStartPoint(grid)
 	for _, instruction := range instructions {
 		robotPos = moveRobot(robotPos, grid, instruction)
@@ -123,6 +141,69 @@ func part1(input []string) string {
 	return fmt.Sprint(result)
 }
 
+var (
+	left  Point = Point{-1, 0}
+	right Point = Point{1, 0}
+	up    Point = Point{0, -1}
+	down  Point = Point{0, 1}
+)
+
+func canMove(from Point, direction Point, grid Grid) bool {
+	newPos := Point{x: from.x + direction.x, y: from.y + direction.y}
+	newVal := grid[newPos.y][newPos.x]
+	if newVal == '#' {
+		return false
+	}
+	if newVal == '.' {
+		return true
+	}
+	if newVal == '[' {
+		if direction == right {
+			return canMove(Point{newPos.x + 1, newPos.y}, direction, grid)
+		} else {
+			return canMove(newPos, direction, grid) && canMove(Point{newPos.x + 1, newPos.y}, direction, grid)
+		}
+	}
+	if newVal == ']' {
+		if direction == left {
+			return canMove(Point{newPos.x - 1, newPos.y}, direction, grid)
+		} else {
+			return canMove(newPos, direction, grid) && canMove(Point{newPos.x - 1, newPos.y}, direction, grid)
+		}
+	}
+
+	return false
+}
+
+func move(from Point, direction Point, grid Grid) {
+	newPos := Point{from.x + direction.x, from.y + direction.y}
+	newVal := grid[newPos.y][newPos.x]
+	currVal := grid[from.y][from.x]
+	if newVal == '[' {
+		move(newPos, direction, grid)
+		if direction != right {
+			move(Point{newPos.x + 1, newPos.y}, direction, grid)
+		}
+	} else if newVal == ']' {
+		move(newPos, direction, grid)
+		if direction != left {
+			move(Point{newPos.x - 1, newPos.y}, direction, grid)
+		}
+	}
+	grid[newPos.y][newPos.x] = currVal
+	grid[from.y][from.x] = '.'
+}
+
 func part2(input []string) string {
-	return fmt.Sprint(2)
+	grid, instructions := parseInput(input, true)
+	robotPos := getStartPoint(grid)
+	for _, instruction := range instructions {
+		direction := getDirection(instruction)
+		if canMove(robotPos, direction, grid) {
+			move(robotPos, direction, grid)
+			robotPos = Point{robotPos.x + direction.x, robotPos.y + direction.y}
+		}
+	}
+	result := calculateGps(grid)
+	return fmt.Sprint(result)
 }

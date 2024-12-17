@@ -16,9 +16,27 @@ func TestDay15Part1(t *testing.T) {
 }
 
 func TestDay15Part2(t *testing.T) {
-	input := utils.ReadFileIntoSlice("input_test")
-	expect := "2"
+	input := utils.ReadFileIntoSlice("input_test_2")
+	expect := "406"
 	result := part2(input)
+	if result != expect {
+		t.Fatal("Day 15 - Part 2 output should be", expect, "but got", result)
+	}
+	input = utils.ReadFileIntoSlice("input_test_3")
+	expect = "509"
+	result = part2(input)
+	if result != expect {
+		t.Fatal("Day 15 - Part 2 output should be", expect, "but got", result)
+	}
+	input = utils.ReadFileIntoSlice("input_test_1")
+	expect = "618"
+	result = part2(input)
+	if result != expect {
+		t.Fatal("Day 15 - Part 2 output should be", expect, "but got", result)
+	}
+	input = utils.ReadFileIntoSlice("input_test")
+	expect = "9021"
+	result = part2(input)
 	if result != expect {
 		t.Fatal("Day 15 - Part 2 output should be", expect, "but got", result)
 	}
