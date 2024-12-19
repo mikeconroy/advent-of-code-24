@@ -2,9 +2,8 @@ package day16
 
 import (
 	"fmt"
-	"math"
-
 	"github.com/mikeconroy/advent-of-code-24/utils"
+	"math"
 )
 
 func Run() (string, string) {
@@ -65,7 +64,7 @@ type Position struct {
 	cost int
 }
 
-func walk(grid Grid, start Point, end Point, dir Direction, visited map[Point]Position) Position {
+func walk(grid Grid, start Point, end Point, dir Direction, visited map[Point]Position, maxCost int) Position {
 	visited[start] = Position{start, right, 0}
 	toVisit := []Position{
 		{
@@ -92,11 +91,8 @@ func walk(grid Grid, start Point, end Point, dir Direction, visited map[Point]Po
 		currPos := toVisit[0]
 		// fmt.Println("visiting:", currPos)
 		if grid[currPos.pos.y][currPos.pos.x] != '#' {
-			if _, ok := visited[currPos.pos]; !ok {
-				visited[currPos.pos] = Position{currPos.pos, currPos.dir, math.MaxInt}
-			}
 
-			if currPos.cost < visited[currPos.pos].cost {
+			if visitedPos, ok := visited[currPos.pos]; !ok || (currPos.cost < visitedPos.cost && currPos.cost <= maxCost) {
 				visited[currPos.pos] = Position{currPos.pos, currPos.dir, currPos.cost}
 
 				if currPos.pos != end {
@@ -152,31 +148,29 @@ func getCost(from Direction, to Direction) int {
 func part1(input []string) string {
 	visited := make(map[Point]Position)
 	grid, start, end := parseInput(input)
-	return fmt.Sprint(walk(grid, start, end, right, visited).cost)
+	return fmt.Sprint(walk(grid, start, end, right, visited, math.MaxInt).cost)
 }
 
 // Either bruteforce Dijkstras algo (part1) by checking every cell
 // to see whether it can reach the end in the best time - cache visited map as
 // we go to speed it up.
 // Or DFS through each path seeing if it's possible to reach the end within the best cost.
+// Or update the walk function to include the paths taken and then add these to a set at the end of the algo.
 func part2(input []string) string {
 	grid, start, end := parseInput(input)
 	visited := make(map[Point]Position)
-	best := walk(grid, start, end, right, visited).cost
+	best := walk(grid, start, end, right, visited, math.MaxInt).cost
 	fmt.Println(best)
 	count := 0
 
-	for y, row := range grid {
-		fmt.Println(y, "/", len(grid))
-		for x, val := range row {
-			if val == '#' {
-				continue
-			}
-			result := walk(grid, start, Point{x, y}, right, visited)
-			result.cost += walk(grid, Point{x, y}, end, result.dir, make(map[Point]Position)).cost
-			if result.cost <= best {
-				count++
-			}
+	logCounter := 0
+	for _, val := range visited {
+		// fmt.Println(logCounter, "/", len(visited))
+		logCounter += 1
+		result := val.cost
+		result += walk(grid, val.pos, end, val.dir, make(map[Point]Position), best).cost
+		if result <= best {
+			count++
 		}
 	}
 	return fmt.Sprint(count)
