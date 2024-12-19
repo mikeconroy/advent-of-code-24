@@ -65,27 +65,26 @@ type Position struct {
 	cost int
 }
 
-func walk(grid Grid, start Point, end Point) int {
-	visited := make(map[Point]int)
-	visited[start] = 0
+func walk(grid Grid, start Point, end Point, dir Direction, visited map[Point]Position) Position {
+	visited[start] = Position{start, right, 0}
 	toVisit := []Position{
 		{
 			pos:  add(start, up),
 			dir:  up,
-			cost: getCost(right, up),
+			cost: getCost(dir, up),
 		},
 		{
 			pos:  add(start, down),
 			dir:  down,
-			cost: getCost(right, down),
+			cost: getCost(dir, down),
 		}, {
 			pos:  add(start, left),
 			dir:  left,
-			cost: getCost(right, left),
+			cost: getCost(dir, left),
 		}, {
 			pos:  add(start, right),
 			dir:  right,
-			cost: getCost(right, right),
+			cost: getCost(dir, right),
 		},
 	}
 	for len(toVisit) != 0 {
@@ -94,11 +93,11 @@ func walk(grid Grid, start Point, end Point) int {
 		// fmt.Println("visiting:", currPos)
 		if grid[currPos.pos.y][currPos.pos.x] != '#' {
 			if _, ok := visited[currPos.pos]; !ok {
-				visited[currPos.pos] = math.MaxInt
+				visited[currPos.pos] = Position{currPos.pos, currPos.dir, math.MaxInt}
 			}
 
-			if currPos.cost < visited[currPos.pos] {
-				visited[currPos.pos] = currPos.cost
+			if currPos.cost < visited[currPos.pos].cost {
+				visited[currPos.pos] = Position{currPos.pos, currPos.dir, currPos.cost}
 
 				if currPos.pos != end {
 					// Check surrounding tiles
@@ -127,6 +126,7 @@ func walk(grid Grid, start Point, end Point) int {
 		// remove from to Visit
 		toVisit = toVisit[1:]
 	}
+	// fmt.Println(visited)
 	return visited[end]
 }
 
@@ -150,10 +150,34 @@ func getCost(from Direction, to Direction) int {
 }
 
 func part1(input []string) string {
+	visited := make(map[Point]Position)
 	grid, start, end := parseInput(input)
-	return fmt.Sprint(walk(grid, start, end))
+	return fmt.Sprint(walk(grid, start, end, right, visited).cost)
 }
 
+// Either bruteforce Dijkstras algo (part1) by checking every cell
+// to see whether it can reach the end in the best time - cache visited map as
+// we go to speed it up.
+// Or DFS through each path seeing if it's possible to reach the end within the best cost.
 func part2(input []string) string {
-	return fmt.Sprint(2)
+	grid, start, end := parseInput(input)
+	visited := make(map[Point]Position)
+	best := walk(grid, start, end, right, visited).cost
+	fmt.Println(best)
+	count := 0
+
+	for y, row := range grid {
+		fmt.Println(y, "/", len(grid))
+		for x, val := range row {
+			if val == '#' {
+				continue
+			}
+			result := walk(grid, start, Point{x, y}, right, visited)
+			result.cost += walk(grid, Point{x, y}, end, result.dir, make(map[Point]Position)).cost
+			if result.cost <= best {
+				count++
+			}
+		}
+	}
+	return fmt.Sprint(count)
 }
