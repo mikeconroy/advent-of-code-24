@@ -160,7 +160,7 @@ func part2(input []string) string {
 	grid, start, end := parseInput(input)
 	visited := make(map[Point]Position)
 	best := walk(grid, start, end, right, visited, math.MaxInt).cost
-	fmt.Println(best)
+	// fmt.Println(best)
 	count := 0
 
 	logCounter := 0
