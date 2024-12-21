@@ -45,9 +45,7 @@ func TestDay17Part1(t *testing.T) {
 		instructions: []int{0, 1, 5, 4, 3, 0},
 		pointer:      0,
 	}
-	comp.print()
 	for !comp.tick() {
-		comp.print()
 	}
 	if comp.a != 0 {
 		t.Fatal("Day 17 - Computer Register A is not 0")
@@ -92,8 +90,8 @@ func TestDay17Part1(t *testing.T) {
 }
 
 func TestDay17Part2(t *testing.T) {
-	input := utils.ReadFileIntoSlice("input_test")
-	expect := "2"
+	input := utils.ReadFileIntoSlice("input_test_1")
+	expect := "117440"
 	result := part2(input)
 	if result != expect {
 		t.Fatal("Day 17 - Part 2 output should be", expect, "but got", result)

@@ -103,37 +103,43 @@ func (comp *Computer) tick() bool {
 	op := comp.instructions[comp.pointer]
 	switch op {
 	case 0:
-		fmt.Println("ADV")
 		comp.adv()
 	case 1:
-		fmt.Println("BXL")
 		comp.bxl()
 	case 2:
-		fmt.Println("BST")
 		comp.bst()
 	case 3:
-		fmt.Println("JNZ")
 		comp.jnz()
 	case 4:
-		fmt.Println("BXC")
 		comp.bxc()
 	case 5:
-		fmt.Println("OUT")
 		comp.out()
 	case 6:
-		fmt.Println("BDV")
 		comp.bdv()
 	case 7:
-		fmt.Println("CDV")
 		comp.cdv()
 	}
 
 	return false
 }
 
+func (comp *Computer) equals(compB Computer) bool {
+	if comp.a == compB.a && comp.b == compB.b && comp.c == compB.c {
+		for i, instruction := range comp.instructions {
+			if compB.instructions[i] != instruction {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
 func (comp *Computer) print() {
 	fmt.Println()
-	fmt.Println("A:", comp.a, "B:", comp.b, "C:", comp.c, "Program:", comp.instructions, "Pointer:", comp.pointer)
+	fmt.Println("A:", comp.a, "B:", comp.b, "C:", comp.c, "Pointer:", comp.pointer)
+	fmt.Println("Program:", comp.instructions)
+	fmt.Println("Output:", comp.output)
 	fmt.Println("--------------------------------------")
 }
 
@@ -158,7 +164,6 @@ func parseInput(input []string) Computer {
 	}
 }
 
-// 210172503 - wrong?
 func part1(input []string) string {
 	comp := parseInput(input)
 	for !comp.tick() {
@@ -170,6 +175,114 @@ func part1(input []string) string {
 	return fmt.Sprint(result)
 }
 
+type CacheKey struct {
+	a, b, c, pointer int
+}
+
+func compareIntSlices(a []int, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, val := range a {
+		if val != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+/*
+- 2 4 1 7 7 5 0 3 4 4 1 7 5 5 3 0
+
+- 2 4	B = A % 8
+
+- 1 7	B = B XOR 7
+
+- 7 5	C = A / (2^B)
+
+- 0 3	A = A / (2^3) = A / 8
+
+- 4 4	B = B XOR C
+
+- 1 7	B = B XOR 7
+
+- 5 5	OUT B%8
+
+  - 3 0	JNZ 0
+    *
+
+- 0 3 5 4 3 0
+
+- 0 3	A = A / 8
+
+- 5 4	OUT A % 8
+
+  - 3 0	JNZ 0
+    *
+    a: 117440 Octal a: 0o345300
+    [0]
+    a: 14680 Octal a: 0o34530
+    [0 3]
+    a: 1835 Octal a: 0o3453
+    [0 3 5]
+    a: 229 Octal a: 0o345
+    [0 3 5 4]
+    a: 28 Octal a: 0o34
+    [0 3 5 4 3]
+    a: 3 Octal a: 0o3
+    [0 3 5 4 3 0]
+    a: 0 Octal a: 0o0
+
+    Working backwards - each A always increases by a single Octal Digit
+    whilst the previous digits remain the same.
+    0o3 = [0]
+    0o34 = [0, 3]
+    0o345 = [0, 3, 4]
+    0o3453 = [0, 3, 4, 5]
+    0o34530 = [0, 3, 4, 5, 3]
+    0o345300 = [0, 3, 4, 5, 3, 0]
+
+    x := 0o3
+    fmt.Printf("%O %d\n", x, x)
+    x = (x << 3)
+    x = x + 0o4
+    fmt.Printf("%O %d\n", x, x)
+    x = (x << 3)
+    x = x + 0o5
+    fmt.Printf("%O %d\n", x, x)
+*/
+func findA(origComp Computer, a int, index int) int {
+	comp := origComp
+	comp.a = a
+	for !comp.tick() {
+	}
+
+	if len(comp.output) > index && comp.output[0] == comp.instructions[len(comp.instructions)-(index+1)] {
+		if len(comp.output) == len(comp.instructions) {
+			return a
+		}
+		newA := a << 3
+		for i := 0o0; i < 0o10; i++ {
+			res := findA(origComp, newA+i, index+1)
+			if res != -1 {
+				return res
+			}
+		}
+
+	}
+
+	return -1
+}
+
 func part2(input []string) string {
-	return fmt.Sprint(2)
+	comp := parseInput(input)
+
+	for a := 0o0; a < 0o10; a++ {
+		result := findA(comp, a, 0)
+		if result != -1 {
+			return fmt.Sprint(result)
+		}
+	}
+	return fmt.Sprint(-1)
+
 }
