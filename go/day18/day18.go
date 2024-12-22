@@ -124,5 +124,20 @@ func part2(input []string, size int, bytes int) string {
 	start := Point{0, 0}
 	end := Point{size, size}
 	res := walk(grid, start, end)
+
+	for byteI := bytes; byteI < len(input); byteI++ {
+		byte := input[byteI]
+		if byte == "" {
+			continue
+		}
+		split := strings.Split(byte, ",")
+		x, _ := strconv.Atoi(split[0])
+		y, _ := strconv.Atoi(split[1])
+		grid[y][x] = '#'
+		if walk(grid, start, end) == 0 {
+			return fmt.Sprint(x, ",", y)
+		}
+	}
+
 	return fmt.Sprint(res)
 }
