@@ -10,7 +10,7 @@ import (
 
 func Run() (string, string) {
 	input := utils.ReadFileIntoSlice("day18/input")
-	return part1(input, 70, 1024), part2(input, 70, 1024)
+	return part1(input, 70, 1024), part2(input, 70)
 }
 
 type Grid = [][]rune
@@ -119,16 +119,16 @@ func part1(input []string, size int, bytes int) string {
 	return fmt.Sprint(res)
 }
 
-func part2(input []string, size int, bytes int) string {
+// Binary Search to find the Byte that blocks the path.
+func part2(input []string, size int) string {
 	start := Point{0, 0}
 	end := Point{size, size}
 
 	min := 0
 	max := len(input) - 1
 	mid := 0
-	for min <= max {
-		mid = min + (max - min) // 2
-
+	for min < max {
+		mid = (min + max) / 2
 		grid := loadGrid(input, size, mid)
 		if walk(grid, start, end) == 0 {
 			max = mid - 1
