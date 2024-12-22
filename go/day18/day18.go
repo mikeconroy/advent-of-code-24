@@ -120,24 +120,21 @@ func part1(input []string, size int, bytes int) string {
 }
 
 func part2(input []string, size int, bytes int) string {
-	grid := loadGrid(input, size, bytes)
 	start := Point{0, 0}
 	end := Point{size, size}
-	res := walk(grid, start, end)
 
-	for byteI := bytes; byteI < len(input); byteI++ {
-		byte := input[byteI]
-		if byte == "" {
-			continue
-		}
-		split := strings.Split(byte, ",")
-		x, _ := strconv.Atoi(split[0])
-		y, _ := strconv.Atoi(split[1])
-		grid[y][x] = '#'
+	min := 0
+	max := len(input) - 1
+	mid := 0
+	for min <= max {
+		mid = min + (max - min) // 2
+
+		grid := loadGrid(input, size, mid)
 		if walk(grid, start, end) == 0 {
-			return fmt.Sprint(x, ",", y)
+			max = mid - 1
+		} else {
+			min = mid + 1
 		}
 	}
-
-	return fmt.Sprint(res)
+	return fmt.Sprint(input[mid])
 }
