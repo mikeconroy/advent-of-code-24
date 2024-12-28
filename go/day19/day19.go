@@ -42,18 +42,9 @@ func isPossible(pattern string, towels []string, cache map[string]bool) bool {
 
 func part1(input []string) string {
 	towels, patterns := parseInput(input)
-	fmt.Println(towels, patterns)
-	fmt.Println(len(towels), len(patterns))
 	count := 0
 	cache := make(map[string]bool)
 	for _, pattern := range patterns {
-		// newTowels := []string{}
-		// for _, towel := range towels {
-		// if strings.Contains(pattern, towel) {
-		// newTowels = append(newTowels, towel)
-		// }
-		// }
-		// fmt.Println(len(newTowels))
 		if isPossible(pattern, towels, cache) {
 			count += 1
 		}
@@ -61,8 +52,39 @@ func part1(input []string) string {
 	return fmt.Sprint(count)
 }
 
+func countCombinations(pattern string, towels []string, cache map[string]int) int {
+	if val, ok := cache[pattern]; ok {
+		return val
+	}
+
+	count := 0
+
+	for _, towel := range towels {
+		if len(pattern) >= len(towel) {
+			if pattern == towel {
+				count += 1
+			} else {
+				if strings.Index(pattern, towel) == 0 {
+					newPattern := pattern[len(towel):]
+					count += countCombinations(newPattern, towels, cache)
+				}
+			}
+		}
+	}
+
+	cache[pattern] = count
+	return count
+}
+
 func part2(input []string) string {
-	return fmt.Sprint(2)
+	towels, patterns := parseInput(input)
+	count := 0
+	cache := make(map[string]int)
+	for _, pattern := range patterns {
+		count += countCombinations(pattern, towels, cache)
+	}
+
+	return fmt.Sprint(count)
 }
 
 func parseInput(input []string) ([]string, []string) {
