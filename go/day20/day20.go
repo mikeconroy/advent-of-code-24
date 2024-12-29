@@ -8,7 +8,7 @@ import (
 
 func Run() (string, string) {
 	input := utils.ReadFileIntoSlice("day20/input")
-	return part1(input, 100), part2(input)
+	return part1(input, 100), part2(input, 100)
 }
 
 type Point struct {
@@ -48,7 +48,6 @@ func nextPosition(grid [][]rune, pos Point, prevPos Point) Point {
 }
 
 func findCheatWithin(pos Point, distances map[Point]int, cheatDistance int, minimumSaved int) int {
-	// bestDistanceSaved := -1
 	posDistance := distances[pos]
 	count := 0
 	for k, val := range distances {
@@ -58,23 +57,17 @@ func findCheatWithin(pos Point, distances map[Point]int, cheatDistance int, mini
 
 		diffX := absDiff(pos.x, k.x)
 		diffY := absDiff(pos.y, k.y)
-
-		if diffX+diffY <= cheatDistance {
-			if posDistance < val+2 {
-				if (val - posDistance - 2) >= minimumSaved {
+		diff := diffX + diffY
+		if diff <= cheatDistance {
+			if posDistance < val+diff {
+				if (val - posDistance - diff) >= minimumSaved {
 					count++
 				}
-				// if bestDistanceSaved < (val - posDistance) {
-				// fmt.Println(pos, posDistance, k, val, val-posDistance-2)
-				// bestDistanceSaved = val - posDistance
-				// }
 			}
 		}
 	}
 
-	// fmt.Println("Best Cheat for:", pos, "Distance Saved:", bestDistanceSaved-2)
 	return count
-	// return bestDistanceSaved - 2
 }
 
 func absDiff(x, y int) int {
@@ -87,7 +80,6 @@ func absDiff(x, y int) int {
 func part1(input []string, minPicoseconds int) string {
 	grid, start, end := parseInput(input)
 	distances := getDistances(grid, start, end)
-	// fmt.Println("Fastest Time:", distances[end])
 
 	count := 0
 	for k := range distances {
@@ -95,14 +87,24 @@ func part1(input []string, minPicoseconds int) string {
 			continue
 		}
 
-		// Cheat that saves > minPicoseconds is possible then add 1 to count
 		count += findCheatWithin(k, distances, 2, minPicoseconds)
 	}
 	return fmt.Sprint(count)
 }
 
-func part2(input []string) string {
-	return fmt.Sprint(2)
+func part2(input []string, minPicoseconds int) string {
+	grid, start, end := parseInput(input)
+	distances := getDistances(grid, start, end)
+
+	count := 0
+	for k := range distances {
+		if k == end {
+			continue
+		}
+
+		count += findCheatWithin(k, distances, 20, minPicoseconds)
+	}
+	return fmt.Sprint(count)
 }
 
 func parseInput(input []string) ([][]rune, Point, Point) {
