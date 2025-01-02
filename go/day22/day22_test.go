@@ -7,8 +7,8 @@ import (
 )
 
 func TestDay22SecretGenerator(t *testing.T) {
-	expect := int64(15_887_950)
-	secret := int64(123)
+	expect := 15_887_950
+	secret := 123
 	result := generateSecret(secret)
 	if result != expect {
 		t.Fatal("Day 22 - Secret Generator output should be", expect, "but got", result)
