@@ -2,6 +2,8 @@ package day23
 
 import (
 	"fmt"
+	"slices"
+	"sort"
 	"strings"
 
 	"github.com/mikeconroy/advent-of-code-24/utils"
@@ -96,6 +98,66 @@ func getSharedNodes(c1 Computer, c2 Computer) []string {
 	return nodes
 }
 
+func validConnection(nodes []string, connId string, comps map[string]Computer) bool {
+	for _, node := range nodes {
+		if comps[node].connected[connId] != true {
+			return false
+		}
+	}
+	return true
+}
+
+func getNetwork(id string, nodes []string, connections map[string]bool, comps map[string]Computer, visited map[string]bool) []string {
+	if len(connections) == 0 {
+		return nodes
+	}
+
+	// Generate Connections between all current nodes
+	nodes = append(nodes, id)
+	longest := 0
+	var longestPath []string
+	for connId := range connections {
+		if visited[connId] {
+			continue
+		}
+
+		visited[connId] = true
+
+		if slices.Contains(nodes, connId) {
+			continue
+		}
+
+		// Could be changed so we only pass the intersections of all connections
+		// instead of checking every ID every time.
+		if validConnection(nodes, connId, comps) {
+			result := getNetwork(connId, nodes, comps[connId].connected, comps, visited)
+			if len(result) > longest {
+				longest = len(result)
+				longestPath = result
+			}
+		}
+	}
+	if longest == 0 {
+		return nodes
+	}
+	return longestPath
+}
+
 func part2(input []string) string {
-	return fmt.Sprint(2)
+	comps := parseInput(input)
+	longest := 0
+	longestPath := []string{}
+
+	for id, comp := range comps {
+		visited := make(map[string]bool)
+		visited[id] = true
+		result := getNetwork(id, []string{}, comp.connected, comps, visited)
+		if len(result) > longest {
+			longest = len(result)
+			longestPath = result
+		}
+	}
+	sort.Strings(longestPath)
+	res := strings.Join(longestPath, ",")
+	return fmt.Sprint(res)
 }
