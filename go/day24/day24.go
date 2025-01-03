@@ -84,6 +84,23 @@ func boolsToInt(bools []bool) int {
 	return result
 }
 
+func getWireInt(id string, wires Wires) int {
+	wireIds := []string{}
+	for wire, _ := range wires {
+		if strings.Contains(wire, id) {
+			wireIds = append(wireIds, wire)
+		}
+	}
+
+	sort.Strings(wireIds)
+	bits := []bool{}
+	for _, wire := range wireIds {
+		bits = append(bits, wires[wire])
+	}
+
+	return boolsToInt(bits)
+}
+
 func part1(input []string) string {
 	wires, gates := parseInput(input)
 	processedGates := make(map[string]bool)
@@ -99,24 +116,42 @@ func part1(input []string) string {
 		}
 	}
 
-	zWires := []string{}
-	for wire, _ := range wires {
-		if strings.Contains(wire, "z") {
-			zWires = append(zWires, wire)
-		}
-	}
-
-	sort.Strings(zWires)
-	zBools := []bool{}
-	for _, wire := range zWires {
-		zBools = append(zBools, wires[wire])
-	}
-
-	result := boolsToInt(zBools)
-
+	result := getWireInt("z", wires)
 	return fmt.Sprint(result)
 }
 
+/**
+ * Expected Z:	1010110101100111110110010110001100011011100110
+ * Actual Z:	1010110101101000110110010110010100101100000110
+ *		            ****             **   ** ****
+ *						     z5-8
+ *						  z10-11
+ *					     z15-16
+ *			    z30-33
+ * Solved by diagraming the logic gates (Binary Adder) in Draw.io
+ * and looking at the outputs of the incorrect bits identified above.
+ * Swapping Wires accordingly & running the program again to validate resolution.
+ */
 func part2(input []string) string {
-	return fmt.Sprint(2)
+	wires, gates := parseInput(input)
+	processedGates := make(map[string]bool)
+	// xVal := getWireInt("x", wires)
+	// yVal := getWireInt("y", wires)
+
+	for len(processedGates) != len(gates) {
+		for _, gate := range gates {
+			if lhsVal, ok := wires[gate.lhs]; ok {
+				if rhsVal, ok := wires[gate.rhs]; ok {
+					wires[gate.result] = gate.op(lhsVal, rhsVal)
+					processedGates[gate.result] = true
+				}
+			}
+		}
+	}
+
+	// zVal := getWireInt("z", wires)
+	// fmt.Println("X:", xVal, "Y:", yVal, "Z:", zVal)
+	// fmt.Println("Expected Z:\t", strconv.FormatInt(int64(xVal+yVal), 2))
+	// fmt.Println("Actual Z:\t", strconv.FormatInt(int64(zVal), 2))
+	return fmt.Sprint("dnt,gdf,gwc,jst,mcm,z05,z15,z30")
 }

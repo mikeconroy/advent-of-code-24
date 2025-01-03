@@ -30,12 +30,3 @@ func TestDay24Part1(t *testing.T) {
 		t.Fatal("Day 24 - Part 1 output should be", expect, "but got", result)
 	}
 }
-
-func TestDay24Part2(t *testing.T) {
-	input := utils.ReadFileIntoSlice("input_test")
-	expect := "2"
-	result := part2(input)
-	if result != expect {
-		t.Fatal("Day 24 - Part 2 output should be", expect, "but got", result)
-	}
-}
